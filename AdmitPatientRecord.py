@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import tkinter.font as tkFont
+from datetime import date
 
 import Patient
 from database import DatabaseConnection
@@ -47,6 +48,7 @@ class SampleApp(tk.Tk):
         self.bill.grid(row=115, column=15)
 
         self.button.grid(row=130, column=5)
+
     def selection(self):
         selection = "You selected the option " + str(self.radio_.get())
         print(selection)
@@ -58,13 +60,14 @@ class SampleApp(tk.Tk):
         disease=self.disease.get()
         bill=self.bill.get()
         blood=self.blood.get()
-        p=Patient.PatientEntity(name, age, gender, mobile, blood, disease, bill)
+        p=Patient.PatientEntity(name,age,mobile,disease,date.today(),gender,blood,bill)
         flag=DatabaseConnection().insertPatientDetail(p)
-        if flag>0:
+        if flag>=0:
+
             messagebox.showinfo("correct","patient admitted successfully")
+            self.destroy()
         else:
             messagebox.showerror("error","something went wrong")
-        # print(name," ",age," ",mobile," ",gender," ",disease," ",bill," ",blood)
 
     def call(self):
         app = SampleApp()

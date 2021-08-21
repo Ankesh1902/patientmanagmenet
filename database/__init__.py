@@ -1,5 +1,6 @@
 import mysql.connector
 from Patient import PatientEntity
+from datetime import date
 
 class DatabaseConnection:
     myDatabase = None
@@ -22,17 +23,21 @@ class DatabaseConnection:
 
     def getConnection(self):
         return self.myDatabase
-    def getPatientDetail(self):
-        str="select * from patient";
+    def getPatientDetail(self,patientId):
+        str="select * from patient where patient_id = %s"
+        val=(patientId,)
+
         mycursor=self.myDatabase.cursor()
-        mycursor.execute(str)
-        a= mycursor.fetchall();
-        print(a)
-        return a;
+        mycursor.execute(str,val)
+        patient= mycursor.fetchone()
+        if mycursor.rowcount>0:
+            return PatientEntity(patient[1],patient[2],patient[3],patient[4],patient[5],patient[6],patient[7],patient[8])
+        else:
+            return 0
 
     def insertPatientDetail(self,patientEntity):
         sql = "INSERT INTO patient (name,age,PhoneNo,Diesease,AdmissionDate,Gender,BloodGroup,bill) VALUES (%s, %s,%s, %s,%s, %s,%s, %s)"
-        val=(patientEntity.getName(),patientEntity.getAge(),patientEntity.getMobile(),patientEntity.getDisease(),'sysdate',patientEntity.getGender(),patientEntity.getBlood(),patientEntity.getBill())
+        val=(patientEntity.getName(),patientEntity.getAge(),patientEntity.getMobile(),patientEntity.getDisease(),patientEntity.getAdmission(),patientEntity.getGender(),patientEntity.getBlood(),patientEntity.getBill())
         mycursor = self.myDatabase.cursor()
         a=mycursor.execute(sql,val)
         self.myDatabase.commit()
